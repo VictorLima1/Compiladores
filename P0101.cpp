@@ -29,55 +29,9 @@ void criaGoto(char* nomePrograma){
 	fclose(fp);
 }
 
-void criaFuncao(char* nomePrograma, int estados, int simbolos, char* sigma){
-	strcat(nomePrograma,".cpp");
-	FILE *fp = fopen(nomePrograma, "w+");
+//void criaFuncao(char* nomePrograma, int estados, int simbolos, char* sigma, int delta[estados][simbolos], int inicial){
 	
-    fprintf(fp, "#include <stdio.h> \n" \
-				"#include <stdlib.h> \n" \
-				"#include <string.h> \n" \
-				"#include <conio.h>\n\n");
-				
-	for(int i = 0; i < estados; i++){
-        fprintf(fp, "void e%d();\n", i);
-	}
-
-	fprintf(fp, "void aceita(); \n" \
-				"void rejeita(); \n");
-				
-	fprintf(fp, "\nchar f[100]; \n" \
-				"int p; \n");
-				
-	for(int i = 0; i < estados; i++){
-		fprintf(fp, "\nvoid e%d() {", i);
-		for(int j = 0; j < simbolos; j++){
-			if(j == 0){
-				fprintf(fp, "\n\tif(f[p] == '%c') {\n", sigma[j]);
-				fprintf(fp, "\t\tp++;\n\t\te%d();\n\t}", i);
-			}
-			else{
-				fprintf(fp, "\n\telse\n\t\tif(f[p] == '%c') {\n", sigma[j]);
-				fprintf(fp, "\t\t\tp++;\n\t\t\te%d();\n\t}", i);
-			}
-			
-		}
-		
-		fprintf(fp, "\n\telse\n\t\tif(f[p] == '\\0') {\n\t\t\taceita();\n\t}");
-		fprintf(fp, "\n\telse{\n\t\t\trejeita();\n\t}");
-		fprintf(fp, "\n}\n");	
-	}
-	
-	fprintf(fp, "\nvoid aceita() {\n\tputs(\"Aceita\");\n\texit(0);\n}");
-	fprintf(fp, "\nvoid rejeita() {\n\tputs(\"Rejeita\");\n\texit(0);\n}");
-	
-	fprintf(fp, "\nint main() {\n\tprintf(\"Digite a palavra: \");\n\tgets(f);\n\te0();\n\treturn 0;\n}");
-/*	fprintf(fp, "\tprintf(\"Digite a palavra: \");\n");
-  	fprintf(fp, "\tgets(f);\n");
-  	fprintf(fp, "\te0();\n");
-  	fprintf(fp, "\treturn 0;\n}");*/
-			
-	fclose(fp);
-}
+//}
 
 int main(void) {
   	int simbolos; // quantidade de símbolos
@@ -131,19 +85,61 @@ int main(void) {
 	scanf("%s",&nomePrograma);
 	
 	if(opcao == 1){
-        criaFuncao(nomePrograma, estados, simbolos, sigma);
+		int i, j;
+        //criaFuncao(nomePrograma, estados, simbolos, sigma, delta, inicial);
+        strcat(nomePrograma,".cpp");
+		FILE *fp = fopen(nomePrograma, "w+");
+
+	    fprintf(fp, "#include <stdio.h> \n" \
+					"#include <stdlib.h> \n" \
+					"#include <string.h> \n" \
+					"#include <conio.h>\n\n");
+
+		for(int i = 0; i < estados; i++){
+	        fprintf(fp, "void e%d();\n", i);
+		}
+
+		fprintf(fp, "void aceita(); \n" \
+					"void rejeita(); \n");
+
+		fprintf(fp, "\nchar f[100]; \n" \
+					"int p; \n");
+
+		for(i = 0; i < estados; i++){
+			fprintf(fp, "\nvoid e%d() {", i);
+			for(j = 0; j < simbolos; j++){
+                if(delta[i][j] != -1){
+                    fprintf(fp, "\n\tif(f[p] == '%c') {\n", sigma[j]);
+					fprintf(fp, "\t\tp++;\n\t\te%d();\n\t}", delta[i][j]);
+				}
+			}
+
+			for(int k = 0; k < finais; k++){
+                if(i == final[k]){
+					if(delta[i][j] == -1 && delta[i][j+1] == -1){
+                        fprintf(fp, "\n\t\tif(f[p] == '\\0') {\n\t\t\taceita();\n\t}");
+					}
+					else{
+                         fprintf(fp, "\n\telse\n\t\tif(f[p] == '\\0') {\n\t\t\taceita();\n\t}");
+					}
+                   
+				}
+			}
+			fprintf(fp, "\n\telse{\n\t\trejeita();\n\t}");
+			fprintf(fp, "\n}\n");
+		}
+
+		fprintf(fp, "\nvoid aceita() {\n\tputs(\"Aceita\");\n\texit(0);\n}");
+		fprintf(fp, "\nvoid rejeita() {\n\tputs(\"Rejeita\");\n\texit(0);\n}");
+
+		fprintf(fp, "\nint main() {\n\tprintf(\"Digite a palavra: \");\n\tgets(f);\n\te%d();\n\treturn 0;\n}", inicial);
+
+		fclose(fp);
 	}
 	else if(opcao == 2){
 		criaGoto(nomePrograma);
 	}
 	
-	/*
-	printf("\nQuantidade de simbolos: %d", simbolos);
-    printf("\nVetor sigma:\n");
-    for(int i = 0; i < simbolos; i++){
-		printf("%c\t", sigma[i]);
-	}
-	*/
 	printf("\n");
 	
 	for(int i = 0; i < estados; i++){
@@ -152,15 +148,6 @@ int main(void) {
 		}
 		printf("\n");
 	}
-	
-	/*
-	printf("\nQuantidade de estados: %d", estados);
-	printf("\nq0: e%d", inicial);
-	printf("\nQuantidade de estados finais: %d", finais);
-	printf("\nVef: ", finais);
-	for(int i = 0; i < finais; i++){
-		printf("e%d ", final[i]);
-	}*/
 
 	getch();
   	return 0;
