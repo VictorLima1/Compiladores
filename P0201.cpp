@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <conio.h>
+//#include <conio.h>
 #include <iostream> 
 #include <string>
 
@@ -28,15 +28,81 @@ int main(void) {
   	//gets(entrada);
 	fgets(entrada, sizeof(entrada), stdin);
   	//getline(cin, entrada);
-  	
-  	for(int i = 0; i < strlen(entrada) - 1; i++){
+
+    int i = 0;
+    int linha = 0;
+    int espaco = 0;
+
+    if(!(entrada[0] >= '0' && entrada[0] <= '9')){
+        while((entrada[i] != ' ')){
+            printf("%c", entrada[i]);
+            vars[linha][i] = entrada[i];
+            i++;
+        }
+        linha++;
+        //printf("\nImprimi tudo, e o i é: %d", i);
+    }
+    else{
+        printf("N(%c", entrada[i]);
+        if(entrada[i + 1] >= '0' && entrada[i + 1] <= '9'){
+            int j = i+1;
+            while(entrada[j] >= '0' && entrada[j] <= '9'){
+                printf("%c", entrada[j]);
+                j++;
+            }
+            printf(")");
+            i = j;
+            if(entrada[j] != ' '){
+                espaco = 1;
+                printf("V(%d)", linha);
+            }
+        }
+        else{
+            printf(")");
+            i++;
+            if(entrada[i] != ' '){
+                espaco = 1;
+                printf("V(%d)", linha);
+            }
+        }
+    }
+
+    while((entrada[i] != ' ')){
+        //printf("%c", entrada[i]);
+        vars[linha][i] = entrada[i];
+        i++;
+    }
+
+    if(espaco == 1)
+        linha++;
+
+
+    printf("%d", linha);
+
+    //printf("%d", i);
+
+    for(int j = 0; j < 20; j++){
+        printf("%c", vars[linha -1 ][j]);            
+    }
+
+    /*while(!(entrada[i] >= '0' && entrada[i] <= '9')){
+        i++;
+    }
+
+    printf("%d", i);
+
+    if(i != 0){
+        printf("N("));    
+    }*/
+  	/*for(int i = 0; i < strlen(entrada) - 1; i++){
   		if((entrada[i] >= '0' && entrada[i] <= '9')){
-  			printf("N(%c)", entrada[i]);
+  			printf("N(%c", entrada[i]);
 		}
-		else{
-			printf("")
-		}
-	}
+        int j = i+1;
+		if((entrada[j] >= '0' && entrada[j] <= '9')){
+            printf("%c", entrada[j]);
+        }
+	}*/
   	
   	
   	//printf("%s", entrada);
@@ -194,6 +260,6 @@ int main(void) {
 		fclose(fp);
 	}
 	*/
-	getch();
+	//getch();
   	return 0;
 }
